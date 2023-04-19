@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { WeatherService } from '../weather.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-forecast',
@@ -9,18 +10,15 @@ import { WeatherService } from '../weather.service';
 
 export class ForecastComponent {
 
-  forecastData: ForecastData[] = [];
+  forecast$: Observable<ForecastData[]>;
 
   constructor(weatherService: WeatherService){
-    weatherService.getForecast()
-      .subscribe((forecastData) => {
-        this.forecastData = forecastData;
-      });
+    this.forecast$ = weatherService.getForecast()
   }
 
 }
 
 interface ForecastData {
   dateString: string;
-  temp: number
+  temp: number; 
 }

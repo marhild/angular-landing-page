@@ -42,7 +42,7 @@ export class WeatherService {
           }
         }),
         toArray()
-      )
+      ) as Observable<ForecastData[]>
   }
 
   getCurrentLocation() {
@@ -56,4 +56,9 @@ export class WeatherService {
       )
     })
   }
+}
+
+interface ForecastData {
+  dateString: string;
+  temp: number
 }
