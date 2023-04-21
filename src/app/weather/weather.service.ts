@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map, switchMap, pluck, mergeMap, filter, toArray, share} from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { map, switchMap, mergeMap, filter, toArray, share, tap, catchError, retry} from 'rxjs/operators';
 import { HttpParams, HttpClient } from '@angular/common/http';
+import { NotificationService } from '../notifications/notification.service';
 
 interface OpenWaetherResponse {
   list: {
@@ -19,7 +20,10 @@ export class WeatherService {
 
   private url = 'https://api.openweathermap.org/data/2.5/forecast';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private notificationService: NotificationService
+  ) { }
 
   getForecast() {
     return this.getCurrentLocation()
@@ -32,7 +36,7 @@ export class WeatherService {
           .set('appid', '07c4b7745be6f41a00ad94156110259a');
         }),
         switchMap(params => this.http.get<OpenWaetherResponse>(this.url, {params})),
-        pluck('list'),
+        map(value => value['list']),
         mergeMap(value => of(...value)),
         filter((value, index) => index % 8 === 0),
         map(value => {
@@ -55,7 +59,20 @@ export class WeatherService {
         },
         (err) => observer.error(err)
       )
-    })
+    }).pipe(
+      retry(1),
+      // only executed if observable emits value
+      tap(() => {
+        this.notificationService.addSuccess('Got your location!')
+      }),
+      catchError((err) => {
+        // handle error
+        this.notificationService.addError('Failed to get your location.')
+        // Return a new Observable to emit values for rest of pipeline
+        // set default location
+        return throwError(() => new Error('Failed to get your location.')); // observable
+      })
+    );
   }
 }
 

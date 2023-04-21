@@ -12,10 +12,6 @@ export class NotificationListComponent {
 
   constructor(private notificationService: NotificationService) {
     this.messages = this.notificationService.messagesOutput;
-
-    setInterval(() => {
-      this.notificationService.addSuccess("It's working");
-    }, 500);
   }
 
   clearMessage(id: number) {
