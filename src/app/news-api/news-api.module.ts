@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NewsApiArticleListComponent } from './news-api-article-list/news-api-article-list.component';
 import { TrimOutletNamePipe } from './trim-outlet-name.pipe';
-
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -11,7 +11,8 @@ import { TrimOutletNamePipe } from './trim-outlet-name.pipe';
     TrimOutletNamePipe
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    SharedModule
   ],
   exports: [
     NewsApiArticleListComponent
