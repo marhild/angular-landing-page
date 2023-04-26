@@ -51,7 +51,10 @@ interface NewsApiResponse {
   articles: Article[]
 }
 
-interface Article {
+export interface Article {
   title: string;
   url: string;
+  source: {
+    name: string;
+  }
 }
